@@ -1,0 +1,118 @@
+1. Setting up a new Django project and creating your first app
+
+When to use: At the beginning of a new Django project or when adding a new component to an existing project.
+Why to use: To establish the basic structure of your Django project and create a modular component (app) for specific functionality.
+How to use: Use Django's command-line tools to create a project and an app within it.
+Pros:
+- Provides a standardized project structure
+- Encourages modular development
+- Automatically sets up necessary files and configurations
+Cons:
+- May create some files you don't need for very simple projects
+- Requires understanding of Django's project structure
+Steps:
+1. Install Django: `pip install django`
+2. Create a new project: `django-admin startproject myproject`
+3. Navigate to the project directory: `cd myproject`
+4. Create a new app: `python manage.py startapp myapp`
+5. Add the app to INSTALLED_APPS in settings.py
+
+2. Django MTV (Model-Template-View) architecture
+
+When to use: When developing any Django application.
+Why to use: To understand and effectively implement Django's architectural pattern.
+How to use: Organize your code into models (data structure), templates (presentation), and views (business logic).
+Pros:
+- Clear separation of concerns
+- Promotes code reusability and maintainability
+- Follows Django's "batteries included" philosophy
+Cons:
+- Learning curve for developers used to traditional MVC
+- Can be overkill for very simple applications
+Steps:
+1. Define models in models.py
+2. Create templates in a templates directory
+3. Write view functions or classes in views.py
+4. Connect views to URLs in urls.py
+
+3. Writing a basic model for a blog post
+
+When to use: When you need to define the data structure for blog posts in your application.
+Why to use: To create a database schema and provide an abstraction layer for working with blog post data.
+How to use: Define a Python class that inherits from django.db.models.Model.
+Pros:
+- Provides an object-oriented interface to your database
+- Automatically creates database tables
+- Enables use of Django's ORM for querying
+Cons:
+- May not be suitable for very complex data structures
+- Can lead to performance issues if not used carefully
+Steps:
+1. In models.py:
+   ```python
+   from django.db import models
+   from django.contrib.auth.models import User
+
+   class BlogPost(models.Model):
+       title = models.CharField(max_length=200)
+       content = models.TextField()
+       author = models.ForeignKey(User, on_delete=models.CASCADE)
+       pub_date = models.DateTimeField(auto_now_add=True)
+
+       def __str__(self):
+           return self.title
+   ```
+2. Run migrations: `python manage.py makemigrations` and `python manage.py migrate`
+
+4. Creating a view function to display a list of all blog posts
+
+When to use: When you need to retrieve and display a list of blog posts.
+Why to use: To handle the logic of fetching data from the database and passing it to a template.
+How to use: Define a function in views.py that queries the database and renders a template.
+Pros:
+- Separates business logic from presentation
+- Allows for easy modification of data before passing to template
+Cons:
+- Can become complex for views with multiple data sources or operations
+Steps:
+1. In views.py:
+   ```python
+   from django.shortcuts import render
+   from .models import BlogPost
+
+   def post_list(request):
+       posts = BlogPost.objects.all().order_by('-pub_date')
+       return render(request, 'blog/post_list.html', {'posts': posts})
+   ```
+2. Create a template file 'blog/post_list.html' to display the posts
+
+5. Creating a URL pattern to map a URL to a view function
+
+When to use: When you need to connect a URL to a specific view in your Django application.
+Why to use: To define the routing structure of your application and map URLs to views.
+How to use: Add URL patterns to your app's urls.py file and include it in the project's main urls.py.
+Pros:
+- Provides a centralized place to manage URL routing
+- Allows for dynamic URL patterns with parameters
+Cons:
+- Can become complex for large applications with many URLs
+Steps:
+1. In your app's urls.py:
+   ```python
+   from django.urls import path
+   from . import views
+
+   urlpatterns = [
+       path('posts/', views.post_list, name='post_list'),
+   ]
+   ```
+2. In your project's main urls.py, include the app's URLs:
+   ```python
+   from django.urls import path, include
+
+   urlpatterns = [
+       path('blog/', include('blog.urls')),
+   ]
+   ```
+
+Remember to consult the official Django documentation for the most up-to-date and accurate information when working on these prompts.
